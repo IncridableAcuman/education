@@ -1,8 +1,9 @@
 package com.education.server.service;
 
 
-import com.blog.backend.domain.user.repository.UserRepository;
-import com.blog.backend.exception.custom.CustomNotFoundException;
+
+import com.education.server.exception.CustomNotFoundException;
+import com.education.server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;

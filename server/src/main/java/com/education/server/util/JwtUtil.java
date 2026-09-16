@@ -1,7 +1,7 @@
 package com.education.server.util;
 
 
-import com.blog.backend.domain.user.entity.UserEntity;
+import com.education.server.entity.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -30,7 +30,7 @@ public class JwtUtil {
         this.secretKry = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    private String generateToken(UserEntity user,long tokenExpiration){
+    private String generateToken(UserEntity user, long tokenExpiration){
         Map<String, Object> claims = new HashMap<>();
         claims.put("id",user.getId());
         claims.put("role",user.getRole());

@@ -1,8 +1,8 @@
 package com.education.server.config;
 
 
-import com.blog.backend.security.service.UserDetailsServiceImpl;
-import com.blog.backend.security.util.JwtUtil;
+import com.education.server.service.UserDetailsServiceImpl;
+import com.education.server.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

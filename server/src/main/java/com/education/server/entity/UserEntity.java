@@ -1,7 +1,7 @@
 package com.education.server.entity;
 
 
-import com.blog.backend.domain.user.entity.enums.Role;
+import com.education.server.entity.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

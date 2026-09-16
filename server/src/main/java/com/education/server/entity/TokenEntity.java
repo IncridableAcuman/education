@@ -1,7 +1,6 @@
 package com.education.server.entity;
 
 
-import com.blog.backend.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

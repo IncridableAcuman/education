@@ -1,9 +1,8 @@
 package com.education.server.service;
 
-
-import com.blog.backend.domain.token.entity.TokenEntity;
-import com.blog.backend.domain.token.repository.TokenRepository;
-import com.blog.backend.domain.user.entity.UserEntity;
+import com.education.server.entity.TokenEntity;
+import com.education.server.entity.UserEntity;
+import com.education.server.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,7 @@ import java.time.LocalDateTime;
 public class TokenService {
     private final TokenRepository tokenRepository;
 
-    public void saveToken(UserEntity user,String refreshToken){
+    public void saveToken(UserEntity user, String refreshToken){
         TokenEntity token = tokenRepository.findByUser(user).orElse(new TokenEntity());
         token.setUser(user);
         token.setRefreshToken(refreshToken);
