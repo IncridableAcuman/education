@@ -1,3 +1,8 @@
+server:
+  port: ${PORT}
+  servlet:
+    context-path: /api/v1
+
 spring:
   application:
     name: server
@@ -30,6 +35,6 @@ jwt:
   access_time: ${JWT_REFRESH_TIME}
   refresh_time: ${JWT_ACCESS_TIME}
 
-file:
-  upload:
-    dir: ./uploads
+
+client:
+  url: ${CLIENT_URL}

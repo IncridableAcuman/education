@@ -3,10 +3,7 @@ package com.education.server.entity;
 
 import com.education.server.entity.enums.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,7 +16,7 @@ import java.util.List;
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter @Setter
+@Getter @Setter @Builder
 public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,10 +34,7 @@ public class UserEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private boolean isActive=false;
-
-    @Column(name = "avatar_url")
-    private String avatarUrl;
+    private String specialty;
 
     @Override
     public @NonNull Collection<? extends GrantedAuthority> getAuthorities() {
