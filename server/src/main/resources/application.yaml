@@ -32,8 +32,8 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
-  access_time: ${JWT_REFRESH_TIME}
-  refresh_time: ${JWT_ACCESS_TIME}
+  access_time: ${JWT_ACCESS_TIME}
+  refresh_time: ${JWT_REFRESH_TIME}
 
 
 client:

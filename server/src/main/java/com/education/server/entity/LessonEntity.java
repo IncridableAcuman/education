@@ -8,13 +8,13 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "courses")
+@Table(name = "lessons")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
-public class CourseEntity {
+public class LessonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,12 +22,18 @@ public class CourseEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description", columnDefinition = "TEXT")
-    private String description;
+    @Column(name = "content", columnDefinition = "TEXT")
+    private String content;
+
+    @Column(name = "video_url")
+    private String videoUrl;
+
+    @Column(name = "order_number")
+    private Integer orderNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "teacher_id", nullable = false)
-    private UserEntity teacher;
+    @JoinColumn(name = "course_id", nullable = false)
+    private CourseEntity course;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

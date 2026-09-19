@@ -1,5 +1,6 @@
 package com.education.server.dto;
 
+import com.education.server.entity.UserEntity;
 import com.education.server.entity.enums.Role;
 
 import jakarta.validation.constraints.Email;
@@ -76,9 +77,23 @@ public class AuthDto {
         private String confirmPassword;
     }
 
-    public record AuthResponse(String accessToken) {
-        public static AuthResponse from(String accessToken) {
-            return new AuthResponse(accessToken);
+    public record AuthResponse(
+            String accessToken,
+            Long id,
+            String fullName,
+            String email,
+            Role role,
+            String specialty
+    ) {
+        public static AuthResponse of(String accessToken, UserEntity user) {
+            return new AuthResponse(
+                    accessToken,
+                    user.getId(),
+                    user.getFullName(),
+                    user.getEmail(),
+                    user.getRole(),
+                    user.getSpecialty()
+            );
         }
     }
 }

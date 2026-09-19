@@ -1,29 +1,37 @@
 package com.education.server.util;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CookieUtil {
     @Value("${jwt.refresh_time}")
-    private int refreshTime;
+    private long refreshTimeMs; // millisekundda
 
-    private void cookieManagement(String refreshToken,int expiration, HttpServletResponse response){
-        Cookie cookie = new Cookie("refreshToken",refreshToken);
-        cookie.setValue(refreshToken);
-        cookie.setSecure(false);
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(expiration);
-        cookie.setPath("/");
+    public void addCookie(String refreshToken, HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(false) // Production muhitida (HTTPS) true qilinadi
+                .path("/")
+                .maxAge(refreshTimeMs / 1000) // Millisekundni sekundga o'tkazish
+                .sameSite("Lax")
+                .build();
 
-        response.addCookie(cookie);
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
-    public void addCookie(String refreshToken,HttpServletResponse response){
-        cookieManagement(refreshToken,refreshTime,response);
-    }
-    public void clearCookie(HttpServletResponse response){
-        cookieManagement(null,0,response);
+
+    public void clearCookie(HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 }

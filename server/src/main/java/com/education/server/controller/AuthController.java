@@ -1,11 +1,13 @@
 package com.education.server.controller;
 
 import com.education.server.dto.AuthDto;
+import com.education.server.entity.UserEntity;
 import com.education.server.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -39,6 +41,14 @@ public class AuthController {
     @PutMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@Valid @RequestBody AuthDto.ResetPasswordRequest request){
         authService.resetPassword(request);
+        return ResponseEntity.ok("Password updated successfully");
+    }
+    @PutMapping("/update-password")
+    public ResponseEntity<String> updatePassword(
+            @AuthenticationPrincipal UserEntity user,
+            @Valid @RequestBody AuthDto.UpdatePasswordRequest request
+    ) {
+        authService.updatePassword(user, request);
         return ResponseEntity.ok("Password updated successfully");
     }
 }
