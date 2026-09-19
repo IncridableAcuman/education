@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { Dashboard } from '../pages/Dashboard';
 import { Applications } from '../pages/Applications';
-import { Courses } from '../pages/Courses';
+import { CoursesPage } from '../pages/CoursesPage';
 import { Students } from '../pages/Students';
 import { Settings } from '../pages/Settings';
 import { Login } from '../pages/Login';
@@ -24,7 +24,7 @@ export const AppRoutes: React.FC = () => {
       <Route path="/" element={<DashboardLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="applications" element={<Applications />} />
-        <Route path="courses" element={<Courses />} />
+        <Route path="courses" element={<CoursesPage />} />
         <Route path="students" element={<Students />} />
         <Route path="settings" element={<Settings />} />
       </Route>
