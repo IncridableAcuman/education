@@ -11,6 +11,7 @@ import {
   AlertCircle 
 } from 'lucide-react';
 import { UseAuth } from '../context/AuthContext';
+import { loginSchema } from '../schema/auth';
 
 export const Login: React.FC = () => {
   const [role, setRole] = useState<'STUDENT' | 'TEACHER'>('STUDENT');
@@ -27,15 +28,24 @@ export const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // 1. Zod orqali validatsiya qilish
+    const validationResult = loginSchema.safeParse({ email, password });
+    if (!validationResult.success) {
+      setError(validationResult.error.issues[0].message);
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await login({ email, password, role });
+      // 2. AuthContext login funksiyasini chaqirish
+      await login({ email, password });
       navigate('/');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(
-        err.response?.data?.message || 'Email yoki parol noto‘g‘ri!'
+        err.response?.data?.message || err.message || 'Email yoki parol noto‘g‘ri!'
       );
     } finally {
       setLoading(false);
@@ -62,7 +72,7 @@ export const Login: React.FC = () => {
         {/* Form Card */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none p-6 sm:p-8 transition-all">
           
-          {/* Rol Tanlash (Student / Teacher) */}
+          {/* Rol Tanlash (UI uchun visual selector) */}
           <div className="grid grid-cols-2 gap-2 p-1.5 bg-slate-100 dark:bg-slate-800/60 rounded-2xl mb-6">
             <button
               type="button"

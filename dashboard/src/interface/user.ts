@@ -1,9 +1,12 @@
-export type Role = "STUDENT" | "TEACHER"
-
 export interface IUser {
+    id: number;
     fullName: string;
     email: string;
-    password: string;
-    role: Role;
-    specialty: string;
+    role: 'STUDENT' | 'TEACHER';
+    specialty?: string | null;
+}
+
+export interface AuthResponse {
+    accessToken: string;
+    user: IUser;
 }

@@ -9,10 +9,12 @@ import {
   AlertCircle, 
   CheckCircle2 
 } from 'lucide-react';
+import { authService } from '../services/authService';
+import { resetPasswordSchema } from '../schema/auth';
 
 export const ResetPassword: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const token = searchParams.get('token'); // URL parametrlaridan token olish (/reset-password?token=xyz)
+  const token = searchParams.get('token') || ''; // URL parametrlaridan token olish (/reset-password?token=xyz)
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -27,28 +29,38 @@ export const ResetPassword: React.FC = () => {
     e.preventDefault();
     setError('');
 
-    if (password.length < 6) {
-      setError('Parol kamida 6 ta belgidan iborat bo‘lishi kerak!');
+    if (!token) {
+      setError('Tiklash tokeni topilmadi. Emailingizdagi havola orqali qayta kiring!');
       return;
     }
 
-    if (password !== confirmPassword) {
-      setError('Parollar bir-biriga mos kelmadi!');
+    // 1. Zod sxemasi orqali validation (Token, Password va ConfirmPassword birga tekshiriladi)
+    const validationResult = resetPasswordSchema.safeParse({
+      token,
+      password,
+      confirmPassword,
+    });
+
+    if (!validationResult.success) {
+      setError(validationResult.error.issues[0].message);
       return;
     }
 
     setLoading(true);
 
     try {
-      // Backend API: await axios.post('/api/auth/reset-password', { token, password });
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // 2. Backend API: Spring Boot PUT /auth/reset-password ga so'rov
+      await authService.resetPassword({ token, password, confirmPassword });
       setIsSuccess(true);
+      
       setTimeout(() => {
         navigate('/login');
       }, 2500);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Parolni yangilashda xatolik yuz berdi!');
+      setError(
+        err.response?.data?.message || err.message || 'Parolni yangilashda xatolik yuz berdi!'
+      );
     } finally {
       setLoading(false);
     }

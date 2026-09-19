@@ -8,6 +8,8 @@ import {
   AlertCircle, 
   CheckCircle2 
 } from 'lucide-react';
+import { authService } from '../services/authService';
+import { forgotPasswordSchema } from '../schema/auth';
 
 export const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -18,15 +20,25 @@ export const ForgotPassword: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // 1. Zod sxemasi orqali tekshirish
+    const validationResult = forgotPasswordSchema.safeParse({ email });
+    if (!validationResult.success) {
+      setError(validationResult.error.issues[0].message);
+      return;
+    }
+
     setLoading(true);
 
     try {
-      // Backend API: await axios.post('/api/auth/forgot-password', { email });
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // 2. Backend API: Spring Boot /auth/forgot-password ga so'rov
+      await authService.forgotPassword({ email });
       setIsSubmitted(true);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Xatolik yuz berdi. Emailni tekshirib qayta urinib ko‘ring!');
+      setError(
+        err.response?.data?.message || err.message || 'Xatolik yuz berdi. Emailni tekshirib qayta urinib ko‘ring!'
+      );
     } finally {
       setLoading(false);
     }
@@ -71,7 +83,7 @@ export const ForgotPassword: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsSubmitted(false)}
-                  className="w-full py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  className="w-full py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
                 >
                   Qayta yuborish
                 </button>

@@ -12,6 +12,8 @@ import {
   AlertCircle,
   BookOpen
 } from 'lucide-react';
+import { UseAuth } from '../context/AuthContext';
+import { registerSchema } from '../schema/auth';
 
 export const Register: React.FC = () => {
   const [role, setRole] = useState<'STUDENT' | 'TEACHER'>('STUDENT');
@@ -19,11 +21,12 @@ export const Register: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [subject, setSubject] = useState(''); // O'qituvchi uchun ixtiyoriy fan nomi
+  const [specialty, setSpecialty] = useState(''); // O'qituvchi mutaxassisligi
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const { register } = UseAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,15 +38,33 @@ export const Register: React.FC = () => {
       return;
     }
 
+    // 1. Payloaddan kerakli qiymatlarni ajratib olish
+    const payload = {
+      fullName,
+      email,
+      password,
+      role,
+      specialty: role === 'TEACHER' ? specialty : undefined
+    };
+
+    // 2. Zod validation
+    const validationResult = registerSchema.safeParse(payload);
+    if (!validationResult.success) {
+      setError(validationResult.error.issues[0].message);
+      return;
+    }
+
     setLoading(true);
 
     try {
-      // API call o'rnida: register({ fullName, email, password, role, subject })
-      await new Promise((res) => setTimeout(res, 1000)); 
-      navigate('/login');
+      // 3. AuthContext register chaqiruvi (Spring Boot /auth/register ga yuboriladi)
+      await register(payload);
+      navigate('/');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Ro‘yxatdan o‘tishda xatolik yuz berdi!');
+      setError(
+        err.response?.data?.message || err.message || 'Ro‘yxatdan o‘tishda xatolik yuz berdi!'
+      );
     } finally {
       setLoading(false);
     }
@@ -73,7 +94,10 @@ export const Register: React.FC = () => {
           <div className="grid grid-cols-2 gap-2 p-1.5 bg-slate-100 dark:bg-slate-800/60 rounded-2xl mb-6">
             <button
               type="button"
-              onClick={() => setRole('STUDENT')}
+              onClick={() => {
+                setRole('STUDENT');
+                setSpecialty('');
+              }}
               className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 role === 'STUDENT'
                   ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
@@ -140,19 +164,19 @@ export const Register: React.FC = () => {
               />
             </div>
 
-            {/* O'qituvchi uchun qo'shimcha input (Masalan: Fan nomi) */}
+            {/* O'qituvchi uchun Mutaxassislik (Specialty) */}
             {role === 'TEACHER' && (
-              <div className="space-y-1.5 animate-fade-in">
+              <div className="space-y-1.5 transition-all">
                 <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                   <BookOpen className="w-3.5 h-3.5 text-indigo-500" />
-                  Dars beradigan faningiz
+                  Mutaxassisligingiz (Fan)
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="Matematika, Fizika yoki Dasturlash"
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
+                  placeholder="Matematika, Fizika yoki Java Backend"
+                  value={specialty}
+                  onChange={(e) => setSpecialty(e.target.value)}
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-slate-900 dark:text-slate-100 text-sm focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                 />
               </div>
